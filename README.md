@@ -6,7 +6,6 @@ Make a file called `config.json` with the following fields:
 
     {
         "token": "your bot client token",
-
     }
 
 `npm install` to install all the dependencies
