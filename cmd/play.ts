@@ -2,6 +2,7 @@ import { ChatInputCommandInteraction, Client, GuildMember, SlashCommandBuilder }
 import { IBotClient } from "../util/interfaces";
 import { MusicPlayer, Song } from "./music/musicPlayer";
 import ytpl, { validateID } from "ytpl";
+import { debug } from "../util/log";
 
 const data = new SlashCommandBuilder()
 .setName("play")
@@ -75,11 +76,11 @@ const func = async (bot: Client & IBotClient, interaction: ChatInputCommandInter
     try {
         if(player.isPlaying) { // already playing something
             if(song) {
-                console.log("to queue song");
+                debug("to queue song");
                 player.enqueue(song);
                 interaction.editReply(`Queued ${song.url}.\nCurrent queue length: ${player.queue.length}`);
             } else if(playlist.length > 0) {
-                console.log("to queue playlist");
+                debug("to queue playlist");
                 for(const s of playlist)
                     player.enqueue(s);
                 
@@ -89,11 +90,11 @@ const func = async (bot: Client & IBotClient, interaction: ChatInputCommandInter
             }
         } else { // nothing playing
             if(song) {
-                console.log("to play song");
+                debug("to play song");
                 await player.play(song);
                 interaction.editReply(`Now playing ${song.url}`);
             } else if(playlist.length > 0) {
-                console.log("to play playlist");
+                debug("to play playlist");
                 const firstSong = playlist.shift() as Song;
                 
                 for(const s of playlist)

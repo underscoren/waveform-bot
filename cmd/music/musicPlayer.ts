@@ -1,6 +1,7 @@
 import { AudioPlayer, AudioPlayerStatus, createAudioPlayer, createAudioResource, demuxProbe, DiscordGatewayAdapterCreator, entersState, joinVoiceChannel, VoiceConnection, VoiceConnectionStatus } from "@discordjs/voice";
 import EventEmitter from "events";
 import ytdl, { getInfo, validateURL, videoInfo } from "ytdl-core";
+import { debug } from "../../util/log";
 
 export class Song {
     title: string;
@@ -70,7 +71,7 @@ export class MusicPlayer extends EventEmitter {
             if(!this.connection)
                 return;
 
-            console.log("AudioPlayer playing");
+            debug("AudioPlayer playing");
             this.isPlaying = true;
 
             if(this.idleTimeoutID) {
@@ -84,7 +85,7 @@ export class MusicPlayer extends EventEmitter {
             if(!this.connection)
                 return;
 
-            console.log("AudioPlayer idle");
+            debug("AudioPlayer idle");
             
             if(this.isPlaying) { // expected to continue playing
                 if(this.queue.length > 0) { // songs left in queue, continue playing
@@ -94,7 +95,7 @@ export class MusicPlayer extends EventEmitter {
                         return;
                     }
 
-                    console.log("playing next queued song");
+                    debug("playing next queued song");
                     
                     this.play(nextSong);
                 } else {
@@ -102,7 +103,7 @@ export class MusicPlayer extends EventEmitter {
                     this.isPlaying = false;
                     this.currentSong = undefined;
 
-                    console.log("stopping player");
+                    debug("stopping player");
 
                     // disconnect after timeout
                     this.setNewTimeout(() => {
@@ -113,7 +114,7 @@ export class MusicPlayer extends EventEmitter {
                 // we have stopped, disconnect after timeout
                 this.currentSong = undefined;
 
-                console.log("player was stopped");
+                debug("player was stopped");
 
                 this.setNewTimeout(() => {
                     this.disconnect();
@@ -131,7 +132,7 @@ export class MusicPlayer extends EventEmitter {
 
     /** Connect to a voice channel */
     async connect(channelId: string, guildId: string, adapterCreator: DiscordGatewayAdapterCreator) {
-        console.log("joining voice channel");
+        debug("joining voice channel");
         this.connection = joinVoiceChannel({
             channelId,
             guildId,
@@ -161,7 +162,7 @@ export class MusicPlayer extends EventEmitter {
 
     /** Cleanup the player state and close the connection */
     async disconnect() {
-        console.log("disconnecting");
+        debug("disconnecting");
 
         this.isPlaying = false;
         this.queue = [];
@@ -190,7 +191,7 @@ export class MusicPlayer extends EventEmitter {
         this.player.play(await song.createAudioStream());
         this.currentSong = song;
 
-        console.log("playing song");
+        debug("playing song");
 
         await new Promise((resolve, reject) => {
             this.player.once(AudioPlayerStatus.Playing, resolve);
@@ -204,7 +205,7 @@ export class MusicPlayer extends EventEmitter {
             throw new Error("Not connected to a voice channel.");
         
         if(this.isPlaying) {
-            console.log("stopping");
+            debug("stopping");
             this.isPlaying = false;
             return this.player.stop();
         }
@@ -214,7 +215,7 @@ export class MusicPlayer extends EventEmitter {
 
     /** Queues a song to be played */
     enqueue(song: Song) {
-        console.log("queueing song");
+        debug("queueing song");
         this.queue.push(song);
     }
 

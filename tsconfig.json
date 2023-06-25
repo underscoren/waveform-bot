@@ -3,6 +3,8 @@
         "moduleResolution": "nodenext",
         "target": "es2022",
         "resolveJsonModule": true,
-        "esModuleInterop": true
+        "esModuleInterop": true,
+        "alwaysStrict": false,
+        "strict": false
     }
 }
