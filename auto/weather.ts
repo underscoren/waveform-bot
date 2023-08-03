@@ -7,6 +7,11 @@ import weatherCodesToEmoji from "./weather_conditions.json"
 
 /** Setup the cron job */
 export const setup = (bot: Client) => {
+    if(!("weatherapi" in data)) {
+        console.warn("Weather API Key not provided, skipping weather cronjob");
+        return;
+    }
+    
     cron.schedule("*/5 * * * *", async () => { // update once every hour
         updateWeather(bot);
     });

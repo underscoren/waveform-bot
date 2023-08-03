@@ -7,10 +7,11 @@ export const data = new SlashCommandBuilder()
 .setDescription("Update VC weather");
 
 export const func = async (bot: Client, interaction: ChatInputCommandInteraction) => {
-    updateWeather(bot)
-        .then(() => interaction.reply({content: "Success", ephemeral: true}))
-        .catch(err => {
-            error(err);
-            interaction.reply({content: `Error: ${err}`, ephemeral: true});
-        });
+    try {
+        updateWeather(bot)
+        interaction.reply({content: "Success", ephemeral: true});
+    } catch (err) {
+        error(err);
+        interaction.reply({content: `Error: ${err}`, ephemeral: true});
+    }
 }
